@@ -1,0 +1,35 @@
+{
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "#tilemap_packed": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
+        "platformer-level-1.tmx#pl": {
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "C:/Users/nbarr/Downloads/PlatformImprovement/assets",
+    "last.imagePath": "C:/Users/nbarr/Downloads/kenney_pixel-line-platformer/Tilemap",
+    "map.height": 40,
+    "map.lastUsedExportFilter": "Tiled map files (*.tmx *.xml)",
+    "map.tileHeight": 17,
+    "map.tileWidth": 17,
+    "map.width": 70,
+    "openFiles": [
+    ],
+    "project": "platformer-level-1.tiled-project",
+    "recentFiles": [
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

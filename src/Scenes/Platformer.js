@@ -69,15 +69,22 @@ class Platformer extends Phaser.Scene {
 
         // Link the Tiled tileset name ("tilemap_packed") to the Phaser
         // image key we loaded ("tilemap_tiles").
-        this.tileset = this.map.addTilesetImage("tilemap_packed", "tilemap_tiles");
-
+        this.tileset = this.map.addTilesetImage("monochrome_tilemap_transparent_packed", "tilemap_tiles");
+        this.goodTileset = this.map.addTilesetImage("goods_tilemap_packed", "goods_sheet")
         // Create the visual tile layer from the "Ground-n-Platformer" layer
+        this.backgroundLayer = this.map.createLayer(
+            "Background-n-Stuff",
+            this.goodTileset,
+            0,
+            0
+        );
         this.groundLayer = this.map.createLayer(
             "Ground-n-Platformer",
             this.tileset,
             0,
             0
         );
+        
 
         // Enable collision on tiles that have either "collides" or "collision"
         // set to true. Checking both fixes the Tiled property-name mismatch.
@@ -100,7 +107,7 @@ class Platformer extends Phaser.Scene {
         );
 
         // Peach sky color to match the level's aesthetic
-        this.cameras.main.setBackgroundColor("#fad8c2");
+        this.cameras.main.setBackgroundColor("#57b4ce");
     }
 
     // Creates physics-enabled sprites from Tiled object placements.
@@ -110,8 +117,8 @@ class Platformer extends Phaser.Scene {
         // Object type definitions — each entry maps a Tiled object name
         // to a spritesheet frame and a group key on this scene.
         const objectTypes = [
-            { name: "coin", frame: 54, groupKey: "coinGroup" },
-            { name: "end", frame: 58, groupKey: "endGroup" },
+            { name: "coin", frame: 40, groupKey: "coinGroup" },
+            { name: "end", frame: 40, groupKey: "endGroup" },
         ];
 
         for (const { name, frame, groupKey } of objectTypes) {

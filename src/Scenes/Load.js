@@ -28,12 +28,12 @@ class Load extends Phaser.Scene {
 
         // The tilemap image loaded as a plain image — used by addTilesetImage
         // to map tile IDs to actual pixels in the tilemap layer.
-        this.load.image("tilemap_tiles", "tilemap_packed.png");
+        this.load.image("tilemap_tiles", "monochrome_tilemap_transparent_packed.png");
 
         // The same image loaded as a spritesheet — used by createFromObjects
         // to create individual sprites for coins, the goal flag, etc.
         // Frame size matches the tile dimensions: 16x16 pixels.
-        this.load.spritesheet("tilemap_sheet", "tilemap_packed.png", {
+        this.load.spritesheet("tilemap_sheet", "monochrome_tilemap_transparent_packed.png", {
             frameWidth: 16,
             frameHeight: 16,
         });
@@ -47,9 +47,24 @@ class Load extends Phaser.Scene {
         // The JSON lists which frames are in which PNG.
         this.load.multiatlas("kenny-particles", "kenny-particles.json");
 
+        // Goods tileset spritesheet — used by the Title scene for water
+        // background tiles. 30×30 pixel tiles in a 21×21 grid.
+        this.load.spritesheet("goods_sheet", "goods_tilemap_packed.png", {
+            frameWidth: 30,
+            frameHeight: 30,
+        });
+
+        // Monochrome tileset spritesheet — used by the Title scene for
+        // decorative bubbles and menu elements. 16×16 pixel tiles.
+        this.load.spritesheet("monochrome_sheet", "monochrome_tilemap_transparent_packed.png", {
+            frameWidth: 16,
+            frameHeight: 16,
+        });
+
         // Audio assets
         this.load.audio("jump", "jumpsound.mp3");
-        this.load.audio("music", "backgroundMusic.mp3");
+        this.load.audio("music", "Dark_winter_theme.mp3");
+        this.load.audio("title_music", "Main_theme_snow_city_alternative_loopable.mp3");
     }
 
     create() {
@@ -59,7 +74,7 @@ class Load extends Phaser.Scene {
         this.createAnimations();
 
         // Transition to the main gameplay scene once assets + anims are ready.
-        this.scene.start("platformerScene");
+        this.scene.start("titleScene");
     }
 
     // One method for all animation definitions — keeps create() short
@@ -71,8 +86,8 @@ class Load extends Phaser.Scene {
         this.anims.create({
             key: "walk",
             frames: this.anims.generateFrameNames("tilemap_sheet", {
-                start: 46,
-                end: 45,
+                start: 241,
+                end: 242,
             }),
             frameRate: 15,
             repeat: -1, // loop forever
@@ -86,8 +101,8 @@ class Load extends Phaser.Scene {
             key: "idle",
             defaultTextureKey: "tilemap_sheet",
             frames: this.anims.generateFrameNumbers("tilemap_sheet", {
-                start: 45,
-                end: 45,
+                start: 240,
+                end: 240,
             }),
             repeat: -1,
         });
@@ -97,8 +112,8 @@ class Load extends Phaser.Scene {
         this.anims.create({
             key: "jump",
             frames: this.anims.generateFrameNumbers("tilemap_sheet", {
-                start: 46,
-                end: 46,
+                start: 243,
+                end: 243,
             }),
         });
     }

@@ -240,7 +240,7 @@ class Title extends Phaser.Scene {
     }
 
     setupAudio() {
-        this.music = this.sound.add("music", {
+        this.music = this.sound.add("title_music", {
             loop: true,
             volume: 0.3,
         });

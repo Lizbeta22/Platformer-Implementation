@@ -37,6 +37,8 @@ class Platformer extends Phaser.Scene {
         this.totalCoins = 0;
         this.gameOver = false;
         this.levelWon = false;
+
+        this.showingPanel = false;
     }
     preload() {
     this.load.scenePlugin('AnimatedTiles', './lib/AnimatedTiles.js', 'animatedTiles', 'animatedTiles');
@@ -562,63 +564,18 @@ class Platformer extends Phaser.Scene {
         this.disableInput();
 
         // Show a death-specific overlay
-        this.showOverlay("You fell off!\nPress R to restart", "#e74c3c");
+        this.setupMenu();
     }
 
     // Player reached the goal — win state.
     // Shows a congratulatory message with the coin score.
     onLevelComplete() {
-        if (this.gameOver) return;
-        this.gameOver = true;
-        this.levelWon = true;
-
-        // Freeze the player
-        this.player.setAccelerationX(0);
-        this.player.setVelocity(0, 0);
-        this.player.anims.play("idle");
-
-        // Celebration burst at the goal position
-        const goalObjects = this.endGroup.getChildren();
-        if (goalObjects.length > 0) {
-            const goalX = goalObjects[0].x;
-            const goalY = goalObjects[0].y;
-            this.add
-                .particles(goalX, goalY, "kenny-particles", {
-                    frame: [
-                        "star_03.png",
-                        "star_04.png",
-                        "star_05.png",
-                        "magic_01.png",
-                        "magic_02.png",
-                    ],
-                    scale: { start: 0.08, end: 0 },
-                    lifespan: 600,
-                    speed: { min: 50, max: 150 },
-                    alpha: { start: 1, end: 0 },
-                    emitting: false,
-                })
-                .explode(20);
-        }
-
-        // Fade music for a peaceful transition
-        this.tweens.add({
-            targets: this.music,
-            volume: 0,
-            duration: 800,
-            onComplete: () => {
-                this.music.stop();
-            },
-        });
-
-        this.disableInput();
-
-        // Show win-specific overlay with coin count
-        const allCoins = this.score >= this.totalCoins ? " All coins collected!" : "";
-        this.showOverlay(
-            `Level Complete!\nCoins: ${this.score} / ${this.totalCoins}${allCoins}\nPress R to play again`,
-            "#9ee3c4"
-        );
+        this.scene.start("platformerScene2", {
+            carriedCoins: this.score,
+            level1Coins:this.score
+        })
     }
+
 
     // ----------------------------------------------------------------
     // UI helpers
@@ -665,5 +622,252 @@ class Platformer extends Phaser.Scene {
             })
             .setOrigin(0.5)
             .setScrollFactor(0); // pin to camera
+    }
+    setupMenu() {
+        const cx = this.cameras.main.worldView.centerX;
+        const cy = this.scale.height / 2;
+
+        // Darken the screen
+        this.add.rectangle(
+            cx,
+            cy,
+            this.scale.width,
+            this.scale.height,
+            0x000000,
+            0.7          // opacity
+        )
+        .setScrollFactor(0)
+        .setDepth(1);
+
+        // Game Over title
+        this.add.text(this.scale.width / 2, cy - 180, "YOU DIED", {
+            fontSize: "48px",
+            fontFamily: '"Comfortaa", monospace',
+            color: "#ff6666",
+            stroke: "#000000",
+            strokeThickness: 6,
+            fontStyle: "bold"
+        })
+        .setOrigin(0.5)
+        .setScrollFactor(0)
+        .setDepth(2);
+
+        const startY = 150;
+        const spacing = 70;
+
+
+        const buttons = [
+            { label: "Continue", action: () => this.startGame() },
+            { label: "How to Play", action: () => this.showControls() },
+            { label: "Credits", action: () => this.showCredits() },
+            { label: "Exit", action: () => this.exitGame() },
+        ];
+
+        this.menuButtons = [];
+
+        for (let i = 0; i < buttons.length; i++) {
+            const y = startY + i * spacing;
+
+            const btnBg = this.add.rectangle(cx, y, 280, 48, 0x0d2137, 0.85);
+            btnBg.setStrokeStyle(2, 0x4fc3f7, 0.5);
+            btnBg.setDepth(2);
+            btnBg.setInteractive({ useHandCursor: true });
+
+            const btnText = this.add.text(cx, y, buttons[i].label, {
+                fontSize: "22px",
+                fontFamily: '"Comfortaa", monospace',
+                color: "#b3e5fc",
+            })
+                .setOrigin(0.5)
+                .setDepth(3);
+
+            const btn = {
+                bg: btnBg,
+                text: btnText,
+                action: buttons[i].action,
+                y: y,
+            };
+
+            btnBg.on("pointerover", () => {
+                if (this.showingPanel) return;
+                btnBg.setFillStyle(0x1a3a5c, 0.95);
+                btnBg.setStrokeStyle(2, 0x80deea, 1);
+                btnText.setColor("#e0f7fa");
+            });
+
+            btnBg.on("pointerout", () => {
+                btnBg.setFillStyle(0x0d2137, 0.85);
+                btnBg.setStrokeStyle(2, 0x4fc3f7, 0.5);
+                btnText.setColor("#b3e5fc");
+            });
+
+            btnBg.on("pointerdown", () => {
+                if (this.showingPanel) return;
+                btnBg.setFillStyle(0x4fc3f7, 0.5);
+                btnText.setColor("#ffffff");
+            });
+
+            btnBg.on("pointerup", () => {
+                btnBg.setFillStyle(0x0d2137, 0.85);
+                btnBg.setStrokeStyle(2, 0x4fc3f7, 0.5);
+                btnText.setColor("#b3e5fc");
+                buttons[i].action();
+            });
+
+            this.menuButtons.push(btn);
+        }
+    }
+    startGame() {
+        this.tweens.add({
+            targets: this.music,
+            volume: 0,
+            duration: 500,
+            onComplete: () => {
+                this.music.stop();
+                this.scene.start("platformerScene");
+            },
+        });
+    }
+
+    showControls() {
+        if (this.showingPanel) return;
+        this.showingPanel = true;
+
+        const cx = this.scale.width / 2;
+        const cy = this.scale.height / 2;
+
+        const overlay = this.add.rectangle(cx, cy, this.scale.width, this.scale.height, 0x000000, 0.6);
+        overlay.setDepth(10);
+        overlay.setInteractive();
+
+        const panel = this.add.rectangle(cx, cy, 520, 360, 0x0d2137, 0.95);
+        panel.setStrokeStyle(2, 0x4fc3f7, 0.8);
+        panel.setDepth(11);
+
+        const title = this.add.text(cx, cy - 150, "How to Play", {
+            fontSize: "28px",
+            fontFamily: '"Comfortaa", monospace',
+            color: "#4fc3f7",
+        })
+            .setOrigin(0.5)
+            .setDepth(12);
+
+        const controls = [
+            "Arrow Keys / WASD - Move",
+            "Up Arrow / W - Jump",
+            "Double tap jump for double jump!",
+            "Collect all the coins",
+            "Reach the flag to win",
+            "Don't fall off the map!",
+            "",
+            "R - Restart level",
+            "D - Toggle debug view",
+        ];
+
+        const controlsText = this.add.text(cx, cy - 80, controls, {
+            fontSize: "16px",
+            fontFamily: '"Comfortaa", monospace',
+            color: "#b3e5fc",
+            lineSpacing: 8,
+            align: "center",
+        })
+            .setOrigin(0.5, 0)
+            .setDepth(12);
+
+        const closeBtn = this.add.text(cx, cy + 145, "[ Close ]", {
+            fontSize: "18px",
+            fontFamily: '"Comfortaa", monospace',
+            color: "#80deea",
+        })
+            .setOrigin(0.5)
+            .setDepth(12)
+            .setInteractive({ useHandCursor: true });
+
+        closeBtn.on("pointerover", () => closeBtn.setColor("#e0f7fa"));
+        closeBtn.on("pointerout", () => closeBtn.setColor("#80deea"));
+
+        const closePanel = () => {
+            overlay.destroy();
+            panel.destroy();
+            title.destroy();
+            controlsText.destroy();
+            closeBtn.destroy();
+            this.showingPanel = false;
+        };
+
+        closeBtn.on("pointerup", closePanel);
+        overlay.on("pointerup", closePanel);
+    }
+
+    showCredits() {
+        if (this.showingPanel) return;
+        this.showingPanel = true;
+
+        const cx = this.scale.width / 2;
+        const cy = this.scale.height / 2;
+
+        const overlay = this.add.rectangle(cx, cy, this.scale.width, this.scale.height, 0x000000, 0.6);
+        overlay.setDepth(10);
+        overlay.setInteractive();
+
+        const panel = this.add.rectangle(cx, cy, 440, 280, 0x0d2137, 0.95);
+        panel.setStrokeStyle(2, 0x4fc3f7, 0.8);
+        panel.setDepth(11);
+
+        const title = this.add.text(cx, cy - 110, "Credits", {
+            fontSize: "28px",
+            fontFamily: '"Comfortaa", monospace',
+            color: "#4fc3f7",
+        })
+            .setOrigin(0.5)
+            .setDepth(12);
+
+        const credits = [
+            "Game: Platform Improvement",
+            "",
+            "Assets by Kenney",
+            "kenney.nl/assets",
+            "",
+            "Framework: Phaser 3.70.0",
+            "phaser.io",
+        ];
+
+        const creditsText = this.add.text(cx, cy - 40, credits, {
+            fontSize: "16px",
+            fontFamily: '"Comfortaa", monospace',
+            color: "#b3e5fc",
+            lineSpacing: 6,
+            align: "center",
+        })
+            .setOrigin(0.5, 0)
+            .setDepth(12);
+
+        const closeBtn = this.add.text(cx, cy + 105, "[ Close ]", {
+            fontSize: "18px",
+            fontFamily: '"Comfortaa", monospace',
+            color: "#80deea",
+        })
+            .setOrigin(0.5)
+            .setDepth(12)
+            .setInteractive({ useHandCursor: true });
+
+        closeBtn.on("pointerover", () => closeBtn.setColor("#e0f7fa"));
+        closeBtn.on("pointerout", () => closeBtn.setColor("#80deea"));
+
+        const closePanel = () => {
+            overlay.destroy();
+            panel.destroy();
+            title.destroy();
+            creditsText.destroy();
+            closeBtn.destroy();
+            this.showingPanel = false;
+        };
+
+        closeBtn.on("pointerup", closePanel);
+        overlay.on("pointerup", closePanel);
+    }
+
+    exitGame() {
+        this.scene.restart("titleScene");
     }
 }

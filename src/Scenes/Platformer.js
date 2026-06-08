@@ -38,6 +38,10 @@ class Platformer extends Phaser.Scene {
         this.gameOver = false;
         this.levelWon = false;
     }
+    preload() {
+    this.load.scenePlugin('AnimatedTiles', './lib/AnimatedTiles.js', 'animatedTiles', 'animatedTiles');
+}
+
 
     // ----------------------------------------------------------------
     // create() — orchestrates setup by calling focused helper methods.
@@ -92,6 +96,10 @@ class Platformer extends Phaser.Scene {
             collides: true,
             collision: true,
         });
+
+        // Enable animated tiles (water, etc.) via the AnimatedTiles scene plugin.
+        // init() scans the tilemap for tiles with animation data and plays them.
+        this.animatedTiles.init(this.map);
 
         // World bounds: collide on left, right, and top, but NOT bottom
         // (the player can fall off the map — that counts as a death).

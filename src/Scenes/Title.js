@@ -286,15 +286,15 @@ class Title extends Phaser.Scene {
             "Arrow Keys / WASD - Move",
             "Up Arrow / W - Jump",
             "Double tap jump for double jump!",
+            "Space to Climb Ladder!",
             "Collect all the coins",
             "Reach the flag to win",
             "Don't fall off the map!",
-            "",
             "R - Restart level",
             "D - Toggle debug view",
         ];
 
-        const controlsText = this.add.text(cx, cy - 80, controls, {
+        const controlsText = this.add.text(cx, cy - 120, controls, {
             fontSize: "16px",
             fontFamily: '"Comfortaa", monospace',
             color: "#b3e5fc",
@@ -362,7 +362,7 @@ class Title extends Phaser.Scene {
             "phaser.io",
         ];
 
-        const creditsText = this.add.text(cx, cy - 40, credits, {
+        const creditsText = this.add.text(cx, cy - 90, credits, {
             fontSize: "16px",
             fontFamily: '"Comfortaa", monospace',
             color: "#b3e5fc",

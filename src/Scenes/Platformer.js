@@ -97,6 +97,7 @@ class Platformer extends Phaser.Scene {
         this.groundLayer.setCollisionByProperty({
             collides: true,
             collision: true,
+            danger: true,
         });
 
         // Enable animated tiles (water, etc.) via the AnimatedTiles scene plugin.
@@ -181,7 +182,7 @@ class Platformer extends Phaser.Scene {
     // Wires up collision (solid contact) and overlap (trigger zone) checks.
     setupCollisions() {
         // Solid collision — player can't pass through ground tiles
-        this.physics.add.collider(this.player, this.groundLayer);
+        this.physics.add.collider(this.player, this.groundLayer, this.checkDangerTile, null, this);
 
         // Overlap — player touching a coin triggers collection
         // The 5th argument (this) ensures the callback runs in the scene's
@@ -203,7 +204,11 @@ class Platformer extends Phaser.Scene {
             this
         );
     }
-
+    checkDangerTile(player, tile) {
+        if (tile.properties && tile.properties.danger) {
+            this.onPlayerDeath();
+        }
+    }
     // Sets up keyboard input. We store references on `this` instead of
     // using globals so the state is scoped to this scene instance.
     setupInput() {
@@ -223,6 +228,7 @@ class Platformer extends Phaser.Scene {
             },
             this
         );
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     }
 
     // Creates all particle emitters. Each emitter starts in a stopped state
@@ -337,6 +343,7 @@ class Platformer extends Phaser.Scene {
         }
 
         this.handleMovement();
+        this.handleClimbing();
         this.handleJumping();
         this.handleLandingVFX();
         this.handleFallDeath();
@@ -411,6 +418,34 @@ class Platformer extends Phaser.Scene {
             }
 
             this.vfxWalk.stop();
+        }
+    }
+    //New method that handles the climbing for whenever the player is
+    //on a ladder so that they can get up to other higher spaces
+
+    handleClimbing(){
+        const tile = this.groundLayer.getTileAtWorldXY(
+            this.player.x,
+            this.player.y,
+            true
+        );
+        const onLadder = tile && tile.properties && tile.properties.climb;
+
+        if(onLadder){
+            this.jumpsLeft = this.MAX_JUMPS;
+            if (this.spaceKey.isDown){
+                this.player.body.setAllowGravity(false);
+                this.player.setVelocityY(-100);
+                this.player.setVelocityX(0);
+                this.player.setAccelerationX(0);
+            }
+            else{
+                this.player.body.setAllowGravity(false);
+                this.player.setVelocityY(0);
+            }
+        }
+        else{
+            this.player.body.setAllowGravity(true);
         }
     }
 
@@ -623,6 +658,26 @@ class Platformer extends Phaser.Scene {
             .setOrigin(0.5)
             .setScrollFactor(0); // pin to camera
     }
+    onPlayerDeath() {
+        if (this.gameOver) return;
+        this.gameOver = true;
+
+        this.player.setAccelerationX(0);
+        this.player.setVelocity(0, 0);
+        this.player.anims.play("idle");
+
+        this.tweens.add({
+            targets: this.music,
+            volume: 0,
+            duration: 500,
+            onComplete: () => {
+                this.music.stop();
+            },
+        });
+
+        this.disableInput();
+        this.setupMenu();
+    }
     setupMenu() {
         const cx = this.cameras.main.worldView.centerX;
         const cy = this.scale.height / 2;
@@ -733,8 +788,8 @@ class Platformer extends Phaser.Scene {
         if (this.showingPanel) return;
         this.showingPanel = true;
 
-        const cx = this.scale.width / 2;
-        const cy = this.scale.height / 2;
+        const cx = this.cameras.main.worldView.centerX;
+        const cy = this.cameras.main.worldView.centerY;
 
         const overlay = this.add.rectangle(cx, cy, this.scale.width, this.scale.height, 0x000000, 0.6);
         overlay.setDepth(10);
@@ -756,15 +811,15 @@ class Platformer extends Phaser.Scene {
             "Arrow Keys / WASD - Move",
             "Up Arrow / W - Jump",
             "Double tap jump for double jump!",
+            "Space to Climb Ladder!",
             "Collect all the coins",
             "Reach the flag to win",
             "Don't fall off the map!",
-            "",
             "R - Restart level",
             "D - Toggle debug view",
         ];
 
-        const controlsText = this.add.text(cx, cy - 80, controls, {
+        const controlsText = this.add.text(cx, cy - 120, controls, {
             fontSize: "16px",
             fontFamily: '"Comfortaa", monospace',
             color: "#b3e5fc",
@@ -803,8 +858,8 @@ class Platformer extends Phaser.Scene {
         if (this.showingPanel) return;
         this.showingPanel = true;
 
-        const cx = this.scale.width / 2;
-        const cy = this.scale.height / 2;
+        const cx = this.cameras.main.worldView.centerX;
+        const cy = this.cameras.main.worldView.centerY;
 
         const overlay = this.add.rectangle(cx, cy, this.scale.width, this.scale.height, 0x000000, 0.6);
         overlay.setDepth(10);
@@ -832,7 +887,7 @@ class Platformer extends Phaser.Scene {
             "phaser.io",
         ];
 
-        const creditsText = this.add.text(cx, cy - 40, credits, {
+        const creditsText = this.add.text(cx, cy - 90, credits, {
             fontSize: "16px",
             fontFamily: '"Comfortaa", monospace',
             color: "#b3e5fc",

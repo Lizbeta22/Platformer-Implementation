@@ -174,6 +174,7 @@ class Platformer2 extends Phaser.Scene {
             },
             this
         );
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     }
 
     setupVFX() {
@@ -266,6 +267,7 @@ class Platformer2 extends Phaser.Scene {
         }
 
         this.handleMovement();
+        this.handleClimbing();
         this.handleJumping();
         this.handleLandingVFX();
         this.handleFallDeath();
@@ -327,6 +329,36 @@ class Platformer2 extends Phaser.Scene {
             this.vfxWalk.stop();
         }
     }
+
+    //New method that handles the climbing for whenever the player is
+    //on a ladder so that they can get up to other higher spaces
+
+    handleClimbing(){
+        const tile = this.groundLayer.getTileAtWorldXY(
+            this.player.x,
+            this.player.y,
+            true
+        );
+        const onLadder = tile && tile.properties && tile.properties.climb;
+
+        if(onLadder){
+            this.jumpsLeft = this.MAX_JUMPS;
+            if (this.spaceKey.isDown){
+                this.player.body.setAllowGravity(false);
+                this.player.setVelocityY(-100);
+                this.player.setVelocityX(0);
+                this.player.setAccelerationX(0);
+            }
+            else{
+                this.player.body.setAllowGravity(false);
+                this.player.setVelocityY(0);
+            }
+        }
+        else{
+            this.player.body.setAllowGravity(true);
+        }
+    }
+
 
     handleJumping() {
         const onGround = this.player.body.blocked.down;

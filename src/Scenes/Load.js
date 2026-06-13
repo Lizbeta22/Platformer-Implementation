@@ -37,10 +37,14 @@ class Load extends Phaser.Scene {
             frameWidth: 16,
             frameHeight: 16,
         });
+        this.load.scenePlugin('AnimatedTiles', './lib/AnimatedTiles.js', 'animatedTiles', 'animatedTiles');
+        
+
 
         // The Tiled map data in JSON format. This contains the grid of tile
         // IDs for each layer plus object positions for coins and the goal.
         this.load.tilemapTiledJSON("platformer-level-1", "platformer-level-1.tmj");
+        this.load.tilemapTiledJSON("platformer-level-2", "platformer-level-2.tmj");
 
         // Multi-atlas: a texture atlas spread across multiple PNG files.
         // Used for particle effects (smoke, stars, sparks, etc.).
@@ -54,6 +58,14 @@ class Load extends Phaser.Scene {
             frameHeight: 30,
         });
 
+        // Goods tileset spritesheet — 16×16 pixel tiles matching the Tiled
+        // tileset dimensions (39×39 = 1521 tiles). Used by addTilesetImage
+        // in the Platformer scenes so animated tiles and frame IDs match.
+        this.load.spritesheet("goods_tilemap_sheet", "goods_tilemap_packed.png", {
+            frameWidth: 16,
+            frameHeight: 16,
+        });
+
         // Monochrome tileset spritesheet — used by the Title scene for
         // decorative bubbles and menu elements. 16×16 pixel tiles.
         this.load.spritesheet("monochrome_sheet", "monochrome_tilemap_transparent_packed.png", {
@@ -62,7 +74,7 @@ class Load extends Phaser.Scene {
         });
 
         // Audio assets
-        this.load.audio("jump", "jumpsound.mp3");
+        this.load.audio("jump", "Blaster.wav");
         this.load.audio("music", "Dark_winter_theme.mp3");
         this.load.audio("title_music", "Main_theme_snow_city_alternative_loopable.mp3");
     }
@@ -76,6 +88,7 @@ class Load extends Phaser.Scene {
         // Transition to the main gameplay scene once assets + anims are ready.
         this.scene.start("titleScene");
     }
+    
 
     // One method for all animation definitions — keeps create() short
     // and groups related logic together.
@@ -117,4 +130,5 @@ class Load extends Phaser.Scene {
             }),
         });
     }
+    
 }

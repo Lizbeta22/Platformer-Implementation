@@ -51,7 +51,7 @@ class Platformer2 extends Phaser.Scene {
         this.map = this.add.tilemap("platformer-level-2");
 
         this.tileset = this.map.addTilesetImage("monochrome_tilemap_transparent_packed", "tilemap_tiles");
-        this.goodTileset = this.map.addTilesetImage("goods_tilemap_packed", "goods_sheet")
+        this.goodTileset = this.map.addTilesetImage("goods_tilemap_packed", "goods_tilemap_sheet");
         
         this.background2Layer = this.map.createLayer(
             "Background-2",
@@ -81,6 +81,8 @@ class Platformer2 extends Phaser.Scene {
             danger: true,
         });
 
+        // Enable animated tiles (water, etc.) via the AnimatedTiles scene plugin.
+        // init() scans the tilemap for tiles with animation data and plays them.
         this.animatedTiles.init(this.map);
 
         this.physics.world.setBounds(
@@ -100,7 +102,7 @@ class Platformer2 extends Phaser.Scene {
     setupObjects() {
         const objectTypes = [
             { name: "coin", frame: 40, groupKey: "coinGroup" },
-            { name: "end", frame: 267, groupKey: "endGroup" },
+            { name: "end", frame: 266, groupKey: "endGroup" },
         ];
 
         for (const { name, frame, groupKey } of objectTypes) {

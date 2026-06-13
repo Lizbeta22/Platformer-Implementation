@@ -607,8 +607,8 @@ class Platformer extends Phaser.Scene {
     onLevelComplete() {
         this.scene.start("platformerScene2", {
             carriedCoins: this.score,
-            level1Coins:this.score
-        })
+            level1Coins:this.totalCoins
+        });
     }
 
 

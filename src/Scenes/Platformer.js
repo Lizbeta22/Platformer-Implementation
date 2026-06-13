@@ -923,6 +923,6 @@ class Platformer extends Phaser.Scene {
     }
 
     exitGame() {
-        this.scene.restart("titleScene");
+        this.scene.start("titleScene");
     }
 }

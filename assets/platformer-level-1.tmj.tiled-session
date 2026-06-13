@@ -1,12 +1,12 @@
 {
-    "activeFile": "C:/Users/nbarr/Downloads/Pathfinder/assets/tiny-town-tileset.tmx",
+    "activeFile": "platformer-level-1.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "": {
-            "scaleInDock": 1,
-            "scaleInEditor": 1
+            "scaleInDock": 3,
+            "scaleInEditor": 2
         },
         "C:/Users/nbarr/Downloads/Pathfinder/assets/tiny-town-tileset.tmx": {
             "scale": 0.901015625,
@@ -20,36 +20,63 @@
             "scaleInDock": 1
         },
         "platformer-level-1.tmx": {
-            "scale": 1.5,
+            "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 384.66666666666663,
-                "y": 141.66666666666666
+                "x": 101.25,
+                "y": 148.5
             }
         },
+        "platformer-level-1.tmx#goods_tilemap_packed": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "platformer-level-1.tmx#monochrome_tilemap_transparent_packed": {
+            "scaleInDock": 1
+        },
         "platformer-level-1.tmx#tilemap_packed": {
-            "scaleInDock": 3
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "platformer-level-2.tmx": {
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1150.75,
+                "y": 245
+            }
+        },
+        "platformer-level-2.tmx#goods_tilemap_packed": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 2
+        },
+        "platformer-level-2.tmx#monochrome_tilemap_transparent_packed": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
         }
     },
+    "frame.defaultDuration": 250,
     "last.exportedFilePath": "C:/Users/nbarr/Downloads/PlatformImprovement/assets",
     "last.imagePath": "C:/Users/nbarr/Downloads/PlatformImprovement/assets",
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
-    "map.width": 51,
+    "map.width": 100,
     "openFiles": [
-        "C:/Users/nbarr/Downloads/Pathfinder/assets/tiny-town-tileset.tmx"
+        "platformer-level-1.tmx",
+        "platformer-level-2.tmx"
     ],
     "project": "platformer-level-1.tmj.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "C:/Users/nbarr/Downloads/Pathfinder/assets/tiny-town-tileset.tmx",
-        "platformer-level-1.tmx"
+        "platformer-level-2.tmx",
+        "platformer-level-1.tmx",
+        "C:/Users/nbarr/Downloads/Pathfinder/assets/tiny-town-tileset.tmx"
     ],
     "tileset.embedInMap": true,
     "tileset.tileSize": {
-        "height": 20,
-        "width": 20
+        "height": 16,
+        "width": 16
     }
 }

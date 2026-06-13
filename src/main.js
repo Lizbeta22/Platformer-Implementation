@@ -27,7 +27,7 @@ const config = {
             },
         },
     },
-    scene: [Load, Title, Platformer],
+    scene: [Load, Title, Platformer, Platformer2],
 };
 
 const game = new Phaser.Game(config);
